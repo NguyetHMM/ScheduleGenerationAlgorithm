@@ -136,6 +136,41 @@ def on_selection(population):
     selected_population = list(temp.values())
     return selected_population[:2]
 
+def on_crossover(parents):
+    flexible_task_ids = parents[0]['flexible_task_ids']
+    parents_1 = parents[0]['flexible_task_ids']
+    parents_2 = parents[1]['flexible_task_ids']
+    temp_child_1 = []
+    temp_child_2 = []
+    child_1 = []
+    child_2 = []
+    # print(random.randint(2,len(flexible_task_ids))  )
+    while ( temp_child_1 == temp_child_2):
+        temp_child_1 = []
+        temp_child_2 = []
+        x = random.randint(2,(len(flexible_task_ids)-1))  
+        crossover_items = random.sample(parents[0]['flexible_task_ids'],x)
+        for id in parents_1:
+            if id in crossover_items:
+                temp_child_1.append(id)
+        for id in parents_2:
+            if id in crossover_items:
+                temp_child_2.append(id)
+    i = 0
+    for p in parents_1:
+        if p in temp_child_1:
+            child_1.append(temp_child_2[i])
+            i+=1
+        else:
+            child_1.append(p)
+    j = 0
+    for p in parents_2:
+        if p in temp_child_2:
+            child_2.append(temp_child_1[j])
+            j+=1
+        else:
+            child_2.append(p)
+    return child_1, child_2
 
 def toDate(datetime_str):
     return datetime.strptime(datetime_str, '%Y-%m-%d %H:%M:%S')
@@ -156,7 +191,9 @@ def main():
         population[i]['lateness'] = fitness_func(individual_schedule = population[i]['individual_schedule'], flexible_task_ids = population[i]['flexible_task_ids'], tasks=tasks)
     
     two_best_individuals = on_selection(population)
-    print(two_best_individuals)
+    # print(two_best_individuals)
+    x= on_crossover(parents = two_best_individuals)
+    # print(x, "crossover")
     end = time.time()
     print(end-start)
 
